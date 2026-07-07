@@ -1,5 +1,6 @@
 import streamlit as st
-from services.habitudesService import add_habitude
+from services.habitudesService import add_habitude, get_habitudes
+import pandas as pd
 
 options = [1,2,3,4,5,6,7,8,9,10]
 
@@ -19,3 +20,6 @@ with st.form("Ajouter une habitude :"):
         else :
             add_habitude(nom, temps, difficulte, importance)
             st.success("Habitude ajoutée !")
+
+habitudes = get_habitudes()
+st.table(habitudes)

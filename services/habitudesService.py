@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, create_engine, Session
 from db.initialisation_db import get_engine
 from db.models import *
+import pandas as pd
 
 # Ajouter une habitude
 def add_habitude(nom, temps, difficulte, importance):
@@ -9,3 +10,7 @@ def add_habitude(nom, temps, difficulte, importance):
         session.add(newHab)
         session.commit()
 
+def get_habitudes():
+    with Session(get_engine()) as session:
+        df = pd.read_sql("SELECT * FROM habitudes", session.bind)
+        return df
