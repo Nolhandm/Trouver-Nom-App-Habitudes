@@ -1,4 +1,7 @@
 import streamlit as st
+from db.initialisation_db import init_db
+
+init_db()
 
 st.set_page_config(page_title="Application Habitudes", page_icon="⚔️")
 
