@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, create_engine, Session
 import streamlit as st
-from db.models import Habit
+from db.models import Habit, Validation_habits
 
 # Database URL
 DATABASE_URL = "sqlite:///./db/database.db"

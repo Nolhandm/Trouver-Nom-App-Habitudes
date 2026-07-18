@@ -1,7 +1,18 @@
 import streamlit as st
-from utils.Date import Date
 from datetime import date, timedelta
-from services.habitudesService import get_all_habits
+from services.habitudesService import get_all_habits, get_all_checked_habit_ids, check_habit, uncheck_habit
+
+# ---------------------------------------------
+# ----------- Variables globales --------------
+# ---------------------------------------------
+
+# Classe personnalisé pour la gestion de date
+if 'ACTUAL_DATE' not in st.session_state:
+    st.session_state.ACTUAL_DATE = date.today()
+
+list_habits = get_all_habits()
+
+checked_habits_id = get_all_checked_habit_ids(st.session_state.ACTUAL_DATE)
 
 # ---------------------------------------------
 # ---------------- Fonctions ------------------
@@ -10,10 +21,12 @@ from services.habitudesService import get_all_habits
 def previous_date():
     st.session_state.ACTUAL_DATE = st.session_state.ACTUAL_DATE - timedelta(days=1)
     sync_calendar()
+    sync_checkboxes()
 
 def next_date():
     st.session_state.ACTUAL_DATE = st.session_state.ACTUAL_DATE + timedelta(days=1)
     sync_calendar()
+    sync_checkboxes()
 
 # Forcer le calendrier à se synchroniser avec ACTUAL_DATE
 def sync_calendar():
@@ -21,6 +34,13 @@ def sync_calendar():
 
 def update_date():
     st.session_state.ACTUAL_DATE = st.session_state.calendar_picker
+    sync_checkboxes()
+
+def sync_checkboxes():
+    global checked_habits_id
+    checked_habits_id = get_all_checked_habit_ids(st.session_state.ACTUAL_DATE)
+    for h in list_habits:
+        st.session_state[f"habit_check_{h.habit_id}"] = h.habit_id in checked_habits_id
 
 # -------------------------------------------------------------
 # ---------------- Début de l'interface -----------------------
@@ -29,10 +49,6 @@ def update_date():
 st.title("📅 Suivi des Quêtes")
 
 # ---------------- Système de date -----------------------
-
-# Classe personnalisé pour la gestion de date
-if 'ACTUAL_DATE' not in st.session_state:
-    st.session_state.ACTUAL_DATE = date.today()
 
 # Initialiser la clé du calendrier
 if 'calendar_picker' not in st.session_state:
@@ -55,12 +71,9 @@ st.divider()
 
 # ----------- Liste des habitudes -----------------
 
-list_habits = get_all_habits()
-
 st.subheader("✅ Liste des quêtes")
 
-# Si trop lent passer à itertuples
-for habit in list_habits.itertuples():
+for habit in list_habits:
 
     # Colonnes pour habitudes et case à cocher
     col_name, col_info, col_check = st.columns([0.7, 0.2, 0.1])
@@ -69,11 +82,21 @@ for habit in list_habits.itertuples():
         st.write(habit.name)
 
     with col_info:
-        pass
-        #st.caption(f"⏱️ {habit.coeff_temps}min | ⚡ {habit.coeff_difficulte}/10")
+        st.caption(f"⏱️ {habit.time_coeff}min | ⚡ {habit.difficulty_coeff}/10")
+
 
     with col_check:
-        st.checkbox('Valider',label_visibility='hidden', value=False, key=f"habit_check_{habit.habit_id}")
 
+        checkbox_key = f"habit_check_{habit.habit_id}"
+        if checkbox_key not in st.session_state:
+            st.session_state[checkbox_key] = habit.habit_id in checked_habits_id
 
+        is_checked = habit.habit_id in checked_habits_id
+
+        checked = st.checkbox('Valider', label_visibility='hidden', key=checkbox_key)
+        if checked != is_checked:
+            if checked:
+                check_habit(habit.habit_id, st.session_state.ACTUAL_DATE)
+            else:
+                uncheck_habit(habit.habit_id, st.session_state.ACTUAL_DATE)
 
