@@ -1,8 +1,6 @@
 from sqlmodel import Session, select
 from db.init_db import get_engine
-from datetime import date
 from db.models import *
-import pandas as pd
 
 # ---------- Gestion habitudes --------------------
 def add_new_habit(name, time_coeff, difficulty_coeff, importance_coeff):
