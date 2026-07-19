@@ -7,6 +7,7 @@ from typing import Optional
 class Habit(SQLModel, table=True):
 
     __tablename__ = 'Habits'
+    __table_args__ = {'extend_existing': True}
 
     # Id autogénéré
     habit_id: Optional[int] = Field(default=None, primary_key=True)
@@ -19,7 +20,9 @@ class Habit(SQLModel, table=True):
 # Table de validation
 class Validation_habits(SQLModel, table=True):
 
+
     __tablename__ = 'Validation_habits'
+    __table_args__ = {'extend_existing': True}
 
     habit_id: int = Field(primary_key=True, foreign_key='Habits.habit_id')
     validation_date: date = Field(nullable=False, primary_key=True)
