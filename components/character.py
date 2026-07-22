@@ -1,17 +1,18 @@
 import streamlit as st
-from services.statsServices import get_total_xp, compute_level, compute_cumul_xp_for_level, compute_xp_for_level
+import config
+from services.statsServices import get_total_xp, compute_level, compute_cumul_xp_for_level, compute_xp_for_level, compute_rank
 
 class CharacterComponent:
 
     def __init__(self):
         self.total_xp = get_total_xp()
         self.level = compute_level()
-        self.xp_above_level = compute_cumul_xp_for_level(self.level) - self.total_xp
 
         st.title("This is the character Class")
-        st.write(f"XP total actuel : {self.total_xp}")
-        st.write(f"XP above : {compute_cumul_xp_for_level(self.level + 1)}")
-        st.write(f"XP Total nécéssaire : {compute_cumul_xp_for_level(self.level + 1)}")
-        st.write(f"XP Nécéssaire : {compute_xp_for_level(self.level + 1)}")
+        st.image(config.DICT_PATH_VAGABOND_IMG[compute_rank()], width=200)
         st.write(f"Niveau actuel : {self.level}")
-        st.progress(value=self.xp_above_level/compute_xp_for_level(self.level))
+
+        text = f"{self.total_xp-compute_cumul_xp_for_level(self.level-1)} / {compute_xp_for_level(self.level)} XP"
+        st.progress(value=(self.total_xp-compute_cumul_xp_for_level(self.level-1))/compute_xp_for_level(self.level), text=text)
+
+        st.write(f"XP total cummulé : {self.total_xp}")

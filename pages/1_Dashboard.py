@@ -1,6 +1,7 @@
 import streamlit as st
 from datetime import date, timedelta
 from services.habitudesService import get_all_habits, get_all_checked_habit_ids, check_habit, uncheck_habit
+from components.character import CharacterComponent
 
 # ---------------------------------------------
 # ----------- Variables globales --------------
@@ -100,3 +101,5 @@ for habit in list_habits:
             else:
                 uncheck_habit(habit.habit_id, st.session_state.ACTUAL_DATE)
 
+
+char = CharacterComponent()

@@ -30,8 +30,14 @@ def compute_level():
     return int(level)
 
 def compute_cumul_xp_for_level(level):
-    return increase_level/2*pow(level,2) + (base_level-increase_level/2)*level
+    if level <= 0:
+        return 0
+    return int(increase_level/2*pow(level,2) + (base_level-increase_level/2)*level)
 
 def compute_xp_for_level(level):
+    if level <= 0:
+        return 0
+    return int(base_level + (level-1)*increase_level)
 
-    return base_level + (level-1)*increase_level
+def compute_rank():
+    return 4
